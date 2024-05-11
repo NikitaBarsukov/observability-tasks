@@ -1,0 +1,42 @@
+global:
+    scrape_interval: 10s
+scrape_configs:
+    - job_name: "prometheus_master"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["localhost:9090"]
+
+    - job_name: "node_exporter_centos"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["localhost:9100"]
+
+    - job_name: "nginx_exporter"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["localhost:9101"]
+
+    - job_name: "php-fpm-exporter"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["localhost:9102"]
+
+    - job_name: "my-sql-exporter"
+      scrape_interval: 5s
+      static_configs:
+          - targets: ["localhost:9104"]
+
+    - job_name: "blackbox-tcp"
+      scrape_interval: 5s
+      metrics_path: /probe
+      params:
+          module: [tcp_connect]
+      static_configs:
+          - targets: ["myadmin:80"] #Проверяю работу CMS
+      relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: localhost:9105

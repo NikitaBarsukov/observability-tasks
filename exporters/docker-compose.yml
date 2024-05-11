@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+    #  prometheus:
+    # image: prom/prometheus
+    # ports:
+    #   - 9090:9090
+    #volumes:
+    #   - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+    node-exporter:
+        image: prom/node-exporter
+        ports:
+            - 9100:9100
+
+    nginx-exporter:
+        image: nginx/nginx-prometheus-exporter:0.4.2
+        container_name: nginx-exporter
+        environment:
+            - SCRAPE_URI=http://web:80/nginx_status
+            - TELEMETRY_PATH=/metrics
+            - NGINX_RETRIES=10
+        ports:
+            - 9101:9113
+        networks:
+            - docker-nginx-php-mysql_default
+
+    php-fpm-exporter:
+        image: hipages/php-fpm_exporter
+        container_name: php-fpm-exporter
+        environment:
+            - PHP_FPM_SCRAPE_URI=tcp://php:9000/status,tcp://php:9001/status
+        ports:
+            - 9102:9253
+        networks:
+            - docker-nginx-php-mysql_default
+
+    mysql-exporter:
+        image: prom/mysqld-exporter:v0.14.0
+        container_name: mysql-exporter
+        environment:
+            - DATA_SOURCE_NAME=exporter:exporterpassword@(mysql:3306)/
+        ports:
+            - 9104:9104
+        networks:
+            - docker-nginx-php-mysql_default
+
+    blackbox-exporter:
+        image: prom/blackbox-exporter:latest
+        volumes:
+            - ./blackbox.yml:/config/blackbox.yml
+        command:
+            - "--config.file=/config/blackbox.yml"
+        ports:
+            - 9105:9115
+        networks:
+            - docker-nginx-php-mysql_default
+
+networks:
+    docker-nginx-php-mysql_default:
+        external: true
