@@ -1,0 +1,7 @@
+type: S3
+config:
+  bucket: demo-bucket
+  access_key: adminadmin
+  secret_key: adminadmin
+  endpoint: minio:9000
+  insecure: true
