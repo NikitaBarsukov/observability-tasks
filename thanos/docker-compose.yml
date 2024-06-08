@@ -207,6 +207,19 @@ services:
         networks:
             - docker-nginx-php-mysql_default
 
+    alertmanager:
+        image: prom/alertmanager:v0.27.0
+        ports:
+            - 9093:9093
+        volumes:
+            - ./alertmanager/:/etc/alertmanager/
+        restart: always
+        command:
+            - "--config.file=/etc/alertmanager/config.yaml"
+            - "--storage.path=/alertmanager"
+        networks:
+            - docker-nginx-php-mysql_default
+
 networks:
     docker-nginx-php-mysql_default:
         external: true

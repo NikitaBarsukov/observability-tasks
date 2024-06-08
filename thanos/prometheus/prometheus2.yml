@@ -1,3 +1,12 @@
+alerting:
+    alertmanagers:
+        - static_configs:
+            - tartgets:
+                - 'alertmanager:9093'
+
+rule_files:
+    - "alert.rules"
+
 global:
     scrape_interval: 5s
     external_labels:
